@@ -6,6 +6,9 @@
     <title>Document</title>
 </head>
 <body>
+    <div id="app">
+        <p>打开浏览器调试窗口查看演示</p>
+    </div>
     <div id="app_1"></div>
     <div id="app_2"></div>
     <script src="https://cdn.bootcdn.net/ajax/libs/single-spa/5.9.3/umd/single-spa.min.js"></script>
@@ -17,7 +20,7 @@
 
         const app1 = {
             bootstrap: [
-                async () => console.log("app1 bootstrap1"),
+                async (props) => console.log("app1 bootstrap1", props),
                 async () => console.log("app1 bootstrap2"),
             ],
             // mount 也可以挂载数组，通常为一个异步函数
@@ -27,8 +30,8 @@
                     // new Vue().$mount()...
                     console.log("app1 mount1");
                 },
-                async () => {
-                    app_1.innerHTML = "<h1>APP1</h1>";
+                async (props) => {
+                    app_1.innerHTML = `<h1>APP1-props: ${props.a}</h1>`;
                 }
             ],
             async unmount() {
@@ -38,10 +41,10 @@
         };
 
         const app2 = {
-            bootstrap: async () => console.log("app2 bootstrap1"),
-            async mount() {
+            bootstrap: async (props) => console.log("app2 bootstrap1", props),
+            async mount(props) {
                 console.log("app2 mount1");
-                app_2.innerHTML = "<h1>APP2</h1>";
+                app_2.innerHTML = `<h1>APP2-props: ${props.a}</h1>`;
             },
             async unmount() {
                 console.log("app2 unmount");
@@ -50,8 +53,8 @@
         };
 
         // 当路径是 #/app1 的时候加载应用 app1 
-        registerApplication("app1", async () => app1, location => location.hash.startsWith("#/app1"));
-        registerApplication("app2", async () => app2, location => location.hash.startsWith("#/app2"));
+        registerApplication("app1", async () => app1, location => location.hash.startsWith("#/app1"), { a: 1 });
+        registerApplication("app2", async () => app2, location => location.hash.startsWith("#/app2"), { a: 2 });
 
         start();
     </script>
