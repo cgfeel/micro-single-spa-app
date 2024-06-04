@@ -1,7 +1,7 @@
 import { reroute } from "../navigation/reroute";
 import { APPLICATION_STATUS } from "./app.helpers";
 
-const apps: AppItemType[] = [];
+export const apps: AppItemType[] = [];
 
 export function registerApplication(
     appName: string, loadApp: LoadAppType, activeWhen: ActiveWhenType, customProps?: CustomPropsType) {
@@ -24,18 +24,20 @@ export function registerApplication(
     }
 
 export interface ApplicationType {
-    bootstrap: MountType|MountType[];
-    mount: MountType|MountType[];
-    unmount: MountType|MountType[];
+    bootstrap: MountActionType;
+    mount: MountActionType;
+    unmount: MountActionType;
 };
 
-export type AppItemType = Partial<ApplicationType> & {
+export type AppItemType = Partial<Record<keyof ApplicationType, MountType>> & {
     name: string;
     status: APPLICATION_STATUS;
     activeWhen: ActiveWhenType;
     loadApp: LoadAppType;
     customProps?: CustomPropsType;
 };
+
+export type MountActionType = MountType | MountType[];
 
 type ActiveWhenType = (location: Location) => boolean;
 type CustomPropsType = Record<PropertyKey, any>;

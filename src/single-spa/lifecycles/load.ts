@@ -1,4 +1,4 @@
-import { AppItemType } from "../application/app";
+import { AppItemType, MountActionType } from "../application/app";
 import { APPLICATION_STATUS } from "../application/app.helpers";
 
 export function toLoadPromise(app: AppItemType) {
@@ -14,11 +14,17 @@ export function toLoadPromise(app: AppItemType) {
         return loadApp(customProps).then(({ bootstrap, mount, unmount }) => {
             // 将加载的信息更新到 app 并返回
             app.status = APPLICATION_STATUS.NOT_BOOTSTRAPED;
-            app.bootstrap = bootstrap;
-            app.mount = mount;
-            app.unmount = unmount;
+            app.bootstrap = flattenArrayToPromise(bootstrap);
+            app.mount = flattenArrayToPromise(mount);
+            app.unmount = flattenArrayToPromise(unmount);
 
             return app;
         });
     });
+}
+
+// 拍平挂载的方法
+function flattenArrayToPromise(fn: MountActionType) {
+    const fns = Array.isArray(fn) ? fn : [fn];
+    return (props?: AppItemType['customProps']) => fns.reduce((current, fn) => current.then(() => fn(props)), Promise.resolve());
 }

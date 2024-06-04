@@ -4,7 +4,13 @@ import { ApplicationType } from "./single-spa/application/app";
 const app1: ApplicationType = {
     bootstrap: [
         async (props) => console.log("app1 bootstrap1", props),
-        async () => console.log("app1 bootstrap2"),
+        async () => {
+            console.log("app1 bootstrap2");
+            const app1 = document.createElement("div");
+
+            app1.id = "app1";
+            document.body.appendChild(app1);
+        },
     ],
     // mount 也可以挂载数组，通常为一个异步函数
     // 在 single-spa 中是通过 `System.import<LifeCycles>("")` 返回一个 `promise`
@@ -14,12 +20,18 @@ const app1: ApplicationType = {
             console.log("app1 mount1");
         },
         async (props) => {
-            // app_1.innerHTML = `<h1>APP1-props: ${props.a}</h1>`;
+            const app1 = document.getElementById("app1");
+            if (app1) {
+                app1.innerHTML = `<h1>APP1-props: ${props.a}</h1>`;
+            }
         }
     ],
     async unmount() {
         console.log("app1 unmount");
-        // app_1.innerHTML = "";
+        const app1 = document.getElementById("app1");
+        if (app1) {
+            app1.innerHTML = "";
+        }
     }
 };
 
@@ -41,3 +53,4 @@ registerApplication("app1", async () => app1, location => location.hash.startsWi
 registerApplication("app2", async () => app2, location => location.hash.startsWith("#/app2"), { a: 2 });
 
 // 开启路径的监控，路径切换的时候可以调用对应的：mount、unmount、
+start();
