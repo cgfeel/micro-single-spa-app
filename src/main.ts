@@ -17,6 +17,16 @@ function updateElement(id: string, html: string) {
     }
 }
 
+function createScript() {
+    const script = document.createElement("script");
+    script.innerHTML = `window.addEventListener("popstate", () => {
+        console.log(window.location.href, 'inner app update+++');
+    });`;
+    document.body.appendChild(script);
+}
+
+// 挂载应用 ----
+
 const app0: ApplicationType = {
     bootstrap: async ({ _name }) => createElement(_name),
     mount: async ({ _name }) => updateElement(_name, `<div>
@@ -55,6 +65,7 @@ const app2: ApplicationType = {
     bootstrap: async (props) => {
         console.log("app2 bootstrap1", props);
         createElement(props._name);
+        createScript();
     },
     async mount(props) {
         console.log("app2 mount1");
@@ -106,3 +117,8 @@ registerApplication("app4", async () => app4, location => location.hash.startsWi
 
 // 开启路径的监控，路径切换的时候可以调用对应的：mount、unmount
 start();
+
+// 将在路由切换之后再执行
+window.addEventListener("popstate", () => {
+    console.log(window.location.href, 'out app update---');
+});
