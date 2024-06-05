@@ -17,15 +17,13 @@ function updateElement(id: string, html: string) {
     }
 }
 
-
-
 const app0: ApplicationType = {
     bootstrap: async ({ _name }) => createElement(_name),
     mount: async ({ _name }) => updateElement(_name, `<div>
-        <a href="/">app1</a> |
-        <a href="/app2">app2</a> |
-        <a href="/#/app3">app3</a> |
-        <a href="/app2#/app4">app4</a> |
+        <a onclick="window.history.pushState({}, null, '/')">app1</a> |
+        <a onclick="window.history.pushState({}, null, '/app2')">app2</a> |
+        <a href="#/app3">+app3</a> |
+        <a href="#/app4">+app14</a>
     </div>`),
     unmount: async ({ _name }) => updateElement(_name, "")
 };

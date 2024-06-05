@@ -5,13 +5,14 @@ import { toLoadPromise } from "../lifecycles/load";
 import { toMountPromise } from "../lifecycles/mount";
 import { toUnmoutPromise } from "../lifecycles/unmount";
 import { mount } from "../start";
+import { UrlChangeEvent, callCaptureEventListener } from "./navigation.event";
 
 // 后续路径变化也将在这里重新计算，哪些应用被加载、哪些挂载、哪些卸载
-export function reroute(apps: AppItemType[]) {
+export function reroute(apps: AppItemType[], event?: UrlChangeEvent) {
     // 启动的时候执行
     if (mount.start) {
         // 调用了 start 方法，要处理应用挂载或卸载
-        return preformAppChange(apps);
+        return preformAppChange(apps).then(() => callCaptureEventListener(event));
     }
 
     // 注册应用没启动，加载完毕后等待需要去挂载应用
@@ -19,7 +20,7 @@ export function reroute(apps: AppItemType[]) {
 
     // 注意：这里是一个微任务，如果 registerApplication 和 start 同时执行
     // 在微任务修改状态完成前，start 已将应用再次添加到新的加载微任务队列中了
-    return Promise.all(appsToLoad.map(toLoadPromise));
+    return Promise.all(appsToLoad.map(toLoadPromise)).then(() => callCaptureEventListener(event));
 }
 
 function preformAppChange(apps: AppItemType[]) {
@@ -41,6 +42,9 @@ function preformAppChange(apps: AppItemType[]) {
 
     // 已加载的应用只需要挂载即可
     const mountPromises = Promise.all(appsToMount.map(app => tryBootstrapAndMount(app, unmountAllPromise)));
+
+    // 返回一个 Promise，去捕获 Event
+    return Promise.all([loadMountPromises, mountPromises]);
 }
 
 function tryBootstrapAndMount(app: AppItemType, unmountAllPromise: Promise<AppItemType[]>) {
