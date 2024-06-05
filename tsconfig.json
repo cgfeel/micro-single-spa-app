@@ -5,6 +5,7 @@
         "module": "ES6",
         "target": "ES5",
         "jsx": "react-jsx",
+        "strict": true,
         "allowJs": true,
         "moduleResolution": "Node",
         "esModuleInterop": true
