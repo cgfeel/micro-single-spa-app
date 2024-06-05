@@ -68,8 +68,13 @@ const app2: ApplicationType = {
         createScript();
     },
     async mount(props) {
-        console.log("app2 mount1");
         updateElement(props._name, `<h1>APP2-props: ${props.a}</h1>`);
+        return new Promise((resovle) => {
+            setTimeout(() => {
+                console.log("app2 mount1");
+                resovle();
+            }, 1000);
+        });
     },
     async unmount({ _name }) {
         console.log("app2 unmount");
