@@ -1,6 +1,8 @@
 import { AppItemType } from "../application/app";
 import { reroute } from "./reroute";
 
+const listener: Partial<EventListenerObject> = {};
+
 export function callCaptureEventListener(event?: UrlChangeEvent) {
     event && isObject(captureEventListeners, event.type) && captureEventListeners[event.type].forEach(
         ({ listener }) => isEventListenerObject(listener) ? listener.handleEvent.apply(null, [event]) :  listener.apply(null, [event])
@@ -9,12 +11,19 @@ export function callCaptureEventListener(event?: UrlChangeEvent) {
 
 // 对用户的路径进行劫持，劫持后重新调用 rerouter 方法重新计算加载应用
 export function navigationEvent(apps: AppItemType[]) {
-    function urlRoute(event: UrlChangeEvent) {
-        reroute(apps, event);
+    if (listener.handleEvent === undefined) {
+        listener.handleEvent = function(event: UrlChangeEvent) {
+            reroute(apps, event);
+        };
     }
 
-    originalAddEventListener("hashchange", urlRoute);
-    originalAddEventListener("popstate", urlRoute);
+    if (haveEventListenerObject(listener)) {
+        originalRemoveEventListener("hashchange", listener);
+        originalRemoveEventListener("popstate", listener);
+
+        originalAddEventListener("hashchange", listener);
+        originalAddEventListener("popstate", listener);
+    }
 }
 
 export type UrlChangeEvent = HashChangeEvent | PopStateEvent;
@@ -39,6 +48,7 @@ const captureEventListeners: Record<"hashchange" | "popstate", ListenerItemType[
     popstate: [],
 };
 
+const haveEventListenerObject = (listener: object): listener is EventListenerObject => 'handleEvent' in listener;
 const isEventListenerObject = (listener: EventListenerOrEventListenerObject): listener is EventListenerObject => 'handleEvent' in listener;
 const isObject = <T extends Record<PropertyKey, any>, R extends PropertyKey>(data: T, key: R): data is T & Record<R, ListenerItemType[]> => key in data;
 
@@ -46,7 +56,7 @@ const originalAddEventListener = window.addEventListener;
 const originalRemoveEventListener = window.removeEventListener;
 
 window.addEventListener = function(
-    eventName: string, callback: EventListenerOrEventListenerObject, options?: boolean|AddEventListenerOptions) {
+    eventName: string, callback: EventListenerOrEventListenerObject, options?: ListenerItemType['options']) {
         // 符合被劫持的事件，函数不能重复
         if (isObject(captureEventListeners, eventName) && 
             !captureEventListeners[eventName].some(({ listener }) => listener === callback)) {
@@ -57,7 +67,7 @@ window.addEventListener = function(
     };
 
 window.removeEventListener = function(
-    eventName: string, callback: EventListenerOrEventListenerObject, options?: boolean|AddEventListenerOptions) {
+    eventName: string, callback: EventListenerOrEventListenerObject, options?: ListenerItemType['options']) {
         // 符合被劫持的事件，函数不能重复
         if (isObject(captureEventListeners, eventName)) {
             captureEventListeners[eventName] = captureEventListeners[eventName].filter(({ listener }) => listener !== callback);
