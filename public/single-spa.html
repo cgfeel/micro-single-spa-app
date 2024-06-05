@@ -7,7 +7,11 @@
 </head>
 <body>
     <div id="app">
-        <p>打开浏览器调试窗口查看演示</p>
+        <p>打开浏览器调试窗口查看演示 [<a href="/">复现 Single-spa</a>] [<a href="/single-spa.html#/app1">Single-spa 使用原理</a>]</p>
+    </div>
+    <div>
+        <a href="#/app1">app1</a> |
+        <a href="#/app2">app2</a> 
     </div>
     <div id="app_1"></div>
     <div id="app_2"></div>
@@ -20,34 +24,34 @@
 
         const app1 = {
             bootstrap: [
-                async (props) => console.log("app1 bootstrap1", props),
-                async () => console.log("app1 bootstrap2"),
+                async (props) => console.log(`${props.name} bootstrap1`, props),
+                async ({ name }) => console.log(`${name} bootstrap2`),
             ],
             // mount 也可以挂载数组，通常为一个异步函数
             // 在 single-spa 中是通过 `System.import<LifeCycles>("")` 返回一个 `promise`
             mount: [
-                async () => {
+                async ({ name }) => {
                     // new Vue().$mount()...
-                    console.log("app1 mount1");
+                    console.log(`${name} mount1`);
                 },
                 async (props) => {
-                    app_1.innerHTML = `<h1>APP1-props: ${props.a}</h1>`;
+                    app_1.innerHTML = `<h1>${props.name.toUpperCase()}-props: ${props.a}</h1>`;
                 }
             ],
-            async unmount() {
-                console.log("app1 unmount");
+            async unmount({ name }) {
+                console.log(`${name} unmount`);
                 app_1.innerHTML = "";
             }
         };
 
         const app2 = {
-            bootstrap: async (props) => console.log("app2 bootstrap1", props),
+            bootstrap: async (props) => console.log(`${props.name} bootstrap1`, props),
             async mount(props) {
-                console.log("app2 mount1");
+                    console.log(`${props.name} mount1`);
                 app_2.innerHTML = `<h1>APP2-props: ${props.a}</h1>`;
             },
-            async unmount() {
-                console.log("app2 unmount");
+            async unmount({ name }) {
+                console.log(`${name} unmount`);
                 app_2.innerHTML = "";
             }
         };

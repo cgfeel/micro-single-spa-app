@@ -40,9 +40,9 @@ const app0: ApplicationType = {
 
 const app1: ApplicationType = {
     bootstrap: [
-        async (props) => console.log("app1 bootstrap1", props),
+        async (props) => console.log(`${props._name} bootstrap1`, props),
         async ({ _name }) => {
-            console.log("app1 bootstrap2");
+            console.log(`${_name} bootstrap2`);
             createElement(_name);
         },
     ],
@@ -51,63 +51,63 @@ const app1: ApplicationType = {
     mount: [
         async (props) => {
             // new Vue().$mount()...
-            console.log("app1 mount1", props);
+            console.log(`${props._name} mount1`, props);
         },
-        async (props) => updateElement(props._name, `<h1>APP1-props: ${props.a}</h1>`),
+        async (props) => updateElement(props._name, `<h1>${props._name.toUpperCase()}-props: ${props.a}</h1>`),
     ],
     async unmount({ _name }) {
-        console.log("app1 unmount");
+        console.log(`${_name} unmount`);
         updateElement(_name, "");
     }
 };
 
 const app2: ApplicationType = {
     bootstrap: async (props) => {
-        console.log("app2 bootstrap1", props);
+        console.log(`${props._name} bootstrap1`, props);
         createElement(props._name);
         createScript();
     },
     async mount(props) {
-        updateElement(props._name, `<h1>APP2-props: ${props.a}</h1>`);
+        updateElement(props._name, `<h1>${props._name.toUpperCase()}-props: ${props.a}</h1>`);
         return new Promise((resovle) => {
             setTimeout(() => {
-                console.log("app2 mount1");
+                console.log(`${props._name} mount`);
                 resovle();
             }, 1000);
         });
     },
     async unmount({ _name }) {
-        console.log("app2 unmount");
+        console.log(`${_name} unmount`);
         updateElement(_name, "");
     }
 };
 
 const app3: ApplicationType = {
     bootstrap: async (props) => {
-        console.log("app3 bootstrap1", props);
+        console.log(`${props._name} bootstrap1`, props);
         createElement(props._name);
     },
     async mount(props) {
-        console.log("app3 mount1");
+        console.log(`${props._name} mount`);
         updateElement(props._name, `<h1>APP3-props: ${props.a}</h1>`);
     },
     async unmount({ _name }) {
-        console.log("app3 unmount");
+        console.log(`${_name} unmount`);
         updateElement(_name, "");
     }
 };
 
 const app4: ApplicationType = {
     bootstrap: async (props) => {
-        console.log("app4 bootstrap1", props);
+        console.log(`${props._name} bootstrap1`, props);
         createElement(props._name);
     },
     async mount(props) {
-        console.log("app4 mount1");
+        console.log(`${props._name} mount`);
         updateElement(props._name, `<h1>APP4-props: ${props.a}</h1>`);
     },
     async unmount({ _name }) {
-        console.log("app4 unmount");
+        console.log(`${_name} unmount`);
         updateElement(_name, "");
     }
 };
