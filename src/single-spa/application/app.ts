@@ -6,9 +6,12 @@ export const apps: AppItemType[] = [];
 export function registerApplication(
     appName: string, loadApp: LoadAppType, activeWhen: ActiveWhenType, customProps?: CustomPropsType) {
         const registeration = {
+            customProps: {
+                ...customProps,
+                _name: appName
+            },
             name: appName,
             status: APPLICATION_STATUS.NOT_LOADED,
-            customProps,
             activeWhen,
             loadApp,
         };
@@ -30,16 +33,16 @@ export interface ApplicationType {
 };
 
 export type AppItemType = Partial<Record<keyof ApplicationType, MountType>> & {
+    customProps: CustomPropsType & { _name: string };
     name: string;
     status: APPLICATION_STATUS;
     activeWhen: ActiveWhenType;
     loadApp: LoadAppType;
-    customProps?: CustomPropsType;
 };
 
 export type MountActionType = MountType | MountType[];
 
 type ActiveWhenType = (location: Location) => boolean;
 type CustomPropsType = Record<PropertyKey, any>;
-type LoadAppType = (props?: CustomPropsType) => Promise<ApplicationType>;
-type MountType = (props?: CustomPropsType) => Promise<void>;
+type LoadAppType = (props?: AppItemType['customProps']) => Promise<ApplicationType>;
+type MountType = (props?: AppItemType['customProps']) => Promise<void>;
