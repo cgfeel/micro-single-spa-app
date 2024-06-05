@@ -16,7 +16,6 @@ export function registerApplication(
             loadApp,
         };
         apps.push(registeration);
-        // console.log(apps);
 
         // 我们需要给每个应用添加对应的状态变化
 
@@ -44,5 +43,5 @@ export type MountActionType = MountType | MountType[];
 
 type ActiveWhenType = (location: Location) => boolean;
 type CustomPropsType = Record<PropertyKey, any>;
-type LoadAppType = (props?: AppItemType['customProps']) => Promise<ApplicationType>;
-type MountType = (props?: AppItemType['customProps']) => Promise<void>;
+type LoadAppType = (props: AppItemType['customProps']) => Promise<ApplicationType>;
+type MountType = (props: AppItemType['customProps']) => Promise<void>;

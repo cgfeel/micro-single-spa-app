@@ -33,7 +33,7 @@ const app0: ApplicationType = {
         <a onclick="window.history.pushState({}, null, '/')">app1</a> |
         <a onclick="window.history.pushState({}, null, '/app2')">app2</a> |
         <a href="#/app3">+app3</a> |
-        <a href="#/app4">+app14</a>
+        <a href="#/app4">+app4</a>
     </div>`),
     unmount: async ({ _name }) => updateElement(_name, "")
 };

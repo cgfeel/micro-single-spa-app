@@ -28,5 +28,5 @@ export function toLoadPromise(app: AppItemType) {
 // 拍平挂载的方法
 function flattenArrayToPromise(fn: MountActionType) {
     const fns = Array.isArray(fn) ? fn : [fn];
-    return (props?: AppItemType['customProps']) => fns.reduce((current, fn) => current.then(() => fn(props)), Promise.resolve());
+    return (props: AppItemType['customProps']) => fns.reduce((current, fn) => current.then(() => fn(props)), Promise.resolve());
 }
