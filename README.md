@@ -2,7 +2,7 @@
 
 一个 `single-spa` 原理演示，完整内容查看微前端主仓库：https://github.com/cgfeel/zf-micro-app
 
-分为 3 个部分：
+分为 4 个部分：
 
 - `Single-spa` 原理简述 [[查看](#single-spa-原理简述)]
 - `Single-spa` 生命周期 [[查看](#single-spa-微应用的生命周期)]
