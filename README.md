@@ -171,7 +171,7 @@
 
 `preformAppChange` 函数执行过程
 
-- `unmountAllPromise`：创建一个卸载应用的微任务，提取所有在线应用并卸载
+- `unmountAllPromise`：创建一个卸载应用的微任务，提取所有在线应用用于卸载
 - `loadMountPromises`：创建一个加载应用的微任务并执行，直到挂载应用
 - `mountPromises`：创建一个挂载已加载状态应用的微任务并执行，直到挂载应用
 
@@ -202,7 +202,7 @@
 
 对于路由的监听会遇到几个问题：
 
-- 除了监听路由切换，如果应用本身也有相同的应用怎么办？
+- 除了监听路由切换，如果应用本身也有相同的事件怎么办？
 - 如何支持 `history`
 - 将监听方法包裹在 `navigationEvent` 中，如果重复 `start` 怎么避免重复监听
 
@@ -217,9 +217,9 @@
 - `window.addEventListener` 代理传递过来的事件记录在 `captureEventListeners`
 - `window.removeEventListener` 代理将删除的事件从 `captureEventListeners` 移除
 - 通过 `originalAddEventListener` 监听路由变化将当前的 `event` 传递给 `rerouter`
-- `rerouter` 如果是加载应用，将在所有 `toLoadPromise` 触发响应
-- `rerouter` 如果是挂载应用，将在 `loadMountPromises` 和 `loadMountPromises` 触发响应
-- `callCaptureEventListener` 接受触发的响应找到并执行对应的方法
+- `rerouter` 如果是加载应用，将在所有 `toLoadPromise` 完成后触发响应
+- `rerouter` 如果是挂载应用，将在 `loadMountPromises` 和 `loadMountPromises` 完成后触发响应
+- `callCaptureEventListener` 接受触发的响应事件，找到并执行对应的方法
 
 做的优化：
 
@@ -245,13 +245,13 @@
 
 #### 3.3 避免重复调用
 
-- 由于监听 `hashchange`、 `popstate` 在 `navigation` 中
-- 不存在固定地址；重复 `start` 情况下不能通过 `removeEventListener` 取消监听
+- 由于监听 `hashchange`、 `popstate` 在 `navigation` 中不存在固定地址
+- 重复 `start` 情况下不能通过 `removeEventListener` 取消监听
 
 解决办法：
 
 - 将方法 `handleEvent` 初始化时托管在 `listener` 对象中
-- 将对象作为事件的 `listener` 即可
+- 将 `listener` 对象作为事件的 `handler` 即可
 
 ---- 分割线 ----
 
