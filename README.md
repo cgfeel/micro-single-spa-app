@@ -143,5 +143,6 @@
 
 ### `Single-spa` 微应用的生命周期
 
-![无标题-2024-06-04-1410](https://github.com/cgfeel/micro-single-spa-app/assets/578141/ae5063f2-a88d-4535-8400-b07003487740)
+![无标题-2024-06-04-1410](https://github.com/cgfeel/micro-single-spa-app/assets/578141/02f2a86a-d6df-48fe-82b6-2acb1f37f949)
+
 
