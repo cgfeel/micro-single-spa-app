@@ -142,3 +142,6 @@
 其中 `unmountAllPromise` 会重复执行，所以在 `toUnmoutPromise` 要去判断应用状态再执行，关于生命周期见下方总结
 
 ### `Single-spa` 微应用的生命周期
+
+![无标题-2024-06-04-1410](https://github.com/cgfeel/micro-single-spa-app/assets/578141/ae5063f2-a88d-4535-8400-b07003487740)
+
