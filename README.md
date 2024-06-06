@@ -4,10 +4,10 @@
 
 分为 3 个部分：
 
-- `Single-spa` 原理简述
-- `Single-spa` 生命周期
-- `Single-spa` 复现
-- `Single-spa` 目录说明
+- `Single-spa` 原理简述 [[查看](#single-spa-原理简述)]
+- `Single-spa` 生命周期 [[查看](#single-spa-微应用的生命周期)]
+- `Single-spa` 复现 [[查看](#single-spa-复现)]
+- `Single-spa` 目录说明 [[查看](#single-spa-目录说明)]
 
 对于珠峰的课程内容做了一些优化：
 
@@ -272,5 +272,5 @@
 ├── navigation                 // 路由管理
 │   ├── navigation.event.ts    // 监听路由变化
 │   └── reroute.ts             // 加载、挂载、路由变化统一由 rerouter 处理
-└── start.ts                   // 启动应用
+└── start.ts                   // 启动应用开启路由监听
 ```
