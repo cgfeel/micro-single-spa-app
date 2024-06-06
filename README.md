@@ -7,6 +7,7 @@
 - `Single-spa` 原理简述
 - `Single-spa` 生命周期
 - `Single-spa` 复现
+- `Single-spa` 目录说明
 
 对于珠峰的课程内容做了一些优化：
 
@@ -251,3 +252,25 @@
 
 - 将方法 `handleEvent` 初始化时托管在 `listener` 对象中
 - 将对象作为事件的 `listener` 即可
+
+---- 分割线 ----
+
+### `Single-spa` 目录说明
+
+目录：`single-spa` [[查看](https://github.com/cgfeel/micro-single-spa-app/tree/main/src/single-spa)]
+
+```
+├── application                // 应用管理
+│   ├── app.helpers.ts         // 辅助方法和枚举状态
+│   └── app.ts                 // 注册应用
+├── index.ts                   // 对外导出方法
+├── lifecycles                 // 生命周期
+│   ├── bootstrap.ts           // 启动应用
+│   ├── load.ts                // 加载应用
+│   ├── mount.ts               // 挂载应用
+│   └── unmount.ts             // 卸载应用
+├── navigation                 // 路由管理
+│   ├── navigation.event.ts    // 监听路由变化
+│   └── reroute.ts             // 加载、挂载、路由变化统一由 rerouter 处理
+└── start.ts                   // 启动应用
+```
