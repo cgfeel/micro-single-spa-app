@@ -61,7 +61,7 @@
 - `app.helpers.ts` 中 `preformAppChange` [[查看](https://github.com/cgfeel/micro-single-spa-app/blob/main/src/single-spa/application/app.helpers.ts)] 根据生命周期提取应用并归类
 - 根据执行过程，图中将相同分类的生命周期用颜色做了区分
 
-** 根据分类提取以下方法：**
+**根据分类提取以下方法：**
 
 目录：`lifecycles` [[查看](https://github.com/cgfeel/micro-single-spa-app/tree/main/src/single-spa/lifecycles)]
 
@@ -76,6 +76,11 @@
 
 - 提供应用加载和挂载的能力：`bootstrap`、`mount`、`unmount`
 - 将加载、挂载的方法通过 `flattenArrayToPromise` 拍平
+
+关于拍平，在 `main.ts` [[查看](https://github.com/cgfeel/micro-single-spa-app/blob/main/src/main.ts)] 注册应用的时候分别演示：
+
+- 挂载一个 `promise` 函数
+- 挂载一组 `promise` 函数
 
 #### `bootstrap.ts`
 
@@ -95,7 +100,7 @@
 在复现 `Single-spa` 之前可以先了解下：① 上述特征 [[查看](#single-spa-原理简述)]；② 微应用的生命周期 [[查看](#single-spa-微应用的生命周期)]
 
 - 目录：`src` [[查看](https://github.com/cgfeel/micro-single-spa-app/tree/main/src)]
-- URL：`/` 启动服务后，首页即是
+- URL：`/`
 
 所有流程划分 3 个部分，详细见 `main.ts` [[查看](https://github.com/cgfeel/micro-single-spa-app/blob/main/src/main.ts)]：
 
@@ -180,4 +185,69 @@
 - `unmountAllPromise`：卸载当前已挂载的应用
 - `toMountPromise`：挂载应用
 
-其中 `unmountAllPromise` 会重复执行，所以在 `toUnmoutPromise` 要去判断应用状态再执行，关于生命周期见上方总结 [[查看](#single-spa-微应用的生命周期)]
+备注：
+
+- 其中 `unmountAllPromise` 会重复执行，所以在 `toUnmoutPromise` 要去判断应用状态再执行，关于生命周期见上方总结 [[查看](#single-spa-微应用的生命周期)]
+- 珠峰将加载和挂载方法全部写在了 `reroute` 中，我将其合理划分了 3 个方方法，只需要传递应用集合 `apps` 作为参数，提取状态会在执行方法中分别执行
+
+#### 3.1 监听路由变化
+
+目录：`navigation.event.ts` [[查看](https://github.com/cgfeel/micro-single-spa-app/blob/main/src/single-spa/navigation/navigation.event.ts)]
+
+通过 `hashchange`、`popstate` 监听路由变化，这里只要知道 2 点：
+
+- 无论是应用加载、挂载、监听路由，都是执行一遍 `reroute`
+- 优化：将监听方法包裹在 `navigationEvent`，由 `start` 启动时调用，而不是默认全局监听
+
+对于路由的监听会遇到几个问题：
+
+- 除了监听路由切换，如果应用本身也有相同的应用怎么办？
+- 如何支持 `history`
+- 将监听方法包裹在 `navigationEvent` 中，如果重复 `start` 怎么避免重复监听
+
+下面分别针对问题进行解决：
+
+#### 3.2 事件触发顺序
+
+确保先加载路由，再响应监听的同类事件方法
+
+- `originalAddEventListener` 托管 `window.addEventListener`
+- `originalRemoveEventListener` 托管 `window.removeEventListener`
+- `window.addEventListener` 代理传递过来的事件记录在 `captureEventListeners`
+- `window.removeEventListener` 代理将删除的事件从 `captureEventListeners` 移除
+- 通过 `originalAddEventListener` 监听路由变化将当前的 `event` 传递给 `rerouter`
+- `rerouter` 如果是加载应用，将在所有 `toLoadPromise` 触发响应
+- `rerouter` 如果是挂载应用，将在 `loadMountPromises` 和 `loadMountPromises` 触发响应
+- `callCaptureEventListener` 接受触发的响应找到并执行对应的方法
+
+做的优化：
+
+- 将 `addEventListener` 中的 `opeions` 和 `callback` 一同记录
+
+测试方法，在 `main.ts` [[查看](https://github.com/cgfeel/micro-single-spa-app/blob/main/src/main.ts)] 中分别添加了 2 个事件监听：
+
+- 主应用监听：`out app update`
+- 应用内部监听：`inner app update`
+
+在浏览窗口可以看到路由先发生切换，最后再响应事件
+
+#### 3.3 响应支持 history
+
+详细见 `navigation.event.ts` 中的 `patchFn`
+
+- 分别代理：`window.history.pushState`、`window.history.replaceState`
+- 将执行前后的 URL 拿来比较，发生变化则触发 `popstate`
+
+优化：
+
+- 由于全部采用 `history` 的方式变更路由，不会触发 `hashchange`，也不会遇到挂载异步方法重复执行的情况
+
+#### 3.3 避免重复调用
+
+- 由于监听 `hashchange`、 `popstate` 在 `navigation` 中
+- 不存在固定地址；重复 `start` 情况下不能通过 `removeEventListener` 取消监听
+
+解决办法：
+
+- 将方法 `handleEvent` 初始化时托管在 `listener` 对象中
+- 将对象作为事件的 `listener` 即可
