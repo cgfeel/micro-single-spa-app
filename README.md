@@ -2,9 +2,10 @@
 
 一个 `single-spa` 原理演示，完整内容查看微前端主仓库：https://github.com/cgfeel/zf-micro-app
 
-分为 2 个部分：
+分为 3 个部分：
 
 - `Single-spa` 原理简述
+- `Single-spa` 生命周期
 - `Single-spa` 复现
 
 对于珠峰的课程内容做了一些优化：
@@ -49,9 +50,49 @@
 - 这 3 个部分都接受一个返回 `Promise` 的函数，也可以接受一组这样的函数作为数组
 - 每个 `Promise` 函数都接受来自 `loadApp` 透传的 `customProps`，其中还包含了应用名称等
 
+---- 分割线 ----
+
+### `Single-spa` 微应用的生命周期
+
+![无标题-2024-06-04-1410](https://github.com/cgfeel/micro-single-spa-app/assets/578141/02f2a86a-d6df-48fe-82b6-2acb1f37f949)
+
+通过 `Single-spa` 复现来总结：
+
+- `app.helpers.ts` 中 `preformAppChange` [[查看](https://github.com/cgfeel/micro-single-spa-app/blob/main/src/single-spa/application/app.helpers.ts)] 根据生命周期提取应用并归类
+- 根据执行过程，图中将相同分类的生命周期用颜色做了区分
+
+** 根据分类提取以下方法：**
+
+目录：`lifecycles` [[查看](https://github.com/cgfeel/micro-single-spa-app/tree/main/src/single-spa/lifecycles)]
+
+- `load.ts` 加载应用，状态：`NOT_LOADED` - `LOADING_SOURCE_CODE` - `NOT_BOOTSTRAPED`
+- `bootstrap.ts` 启动应用，状态：`NOT_BOOTSTRAPED` - `BOOTSTRAPING` - `NOT_MOUNTED`
+- `mount.ts` 挂载应用，状态：`NOT_MOUNTED` - `MOUNTED`
+- `unmount.ts` 卸载应用，状态：`MOUNTED` - `UNMOUNTING` - `NOT_MOUNTED`
+
+#### `load.ts`
+
+加载应用，只执行一次，之后均直接返回应用不再执行，加载应用会做 2 件事：
+
+- 提供应用加载和挂载的能力：`bootstrap`、`mount`、`unmount`
+- 将加载、挂载的方法通过 `flattenArrayToPromise` 拍平
+
+#### `bootstrap.ts`
+
+启动应用，只执行一次，之后均直接返回应用不再执行，需要注意：
+
+- 启动应用只修改应用状态，在此之前需要通过 `router.ts` 通过 `shouldBeActive` 去判断是否启动应用
+- 不能理解可以先看 `Single-spa` 复现，再回头看启动应用
+
+#### `mount.ts` 和 `unmount.ts`
+
+由 `router.ts` 决定启动状态，挂载和卸载应用只修改了应用状态
+
+---- 分割线 ----
+
 ### `Single-spa` 复现
 
-在复现 `Single-spa` 之前可以先了解下：① 上述特征；② 微应用的生命周期
+在复现 `Single-spa` 之前可以先了解下：① 上述特征 [[查看](#single-spa-原理简述)]；② 微应用的生命周期 [[查看](#single-spa-微应用的生命周期)]
 
 - 目录：`src` [[查看](https://github.com/cgfeel/micro-single-spa-app/tree/main/src)]
 - URL：`/` 启动服务后，首页即是
@@ -98,7 +139,7 @@
 - 注册加载应用的微任务还未执行，挂载应用已发起一个新的微任务将现有未加载的应用再次加载
 - 好在挂载方法 `toLoadPromise` 在执行时会去判断一遍任务当前状态，避免重复挂载
 
-关于生命周期 `toLoadPromise` 见下方总结
+关于生命周期 `toLoadPromise` 见上方总结 [[查看](#single-spa-微应用的生命周期)]
 
 #### 2.1 挂载应用
 
@@ -139,10 +180,4 @@
 - `unmountAllPromise`：卸载当前已挂载的应用
 - `toMountPromise`：挂载应用
 
-其中 `unmountAllPromise` 会重复执行，所以在 `toUnmoutPromise` 要去判断应用状态再执行，关于生命周期见下方总结
-
-### `Single-spa` 微应用的生命周期
-
-![无标题-2024-06-04-1410](https://github.com/cgfeel/micro-single-spa-app/assets/578141/02f2a86a-d6df-48fe-82b6-2acb1f37f949)
-
-
+其中 `unmountAllPromise` 会重复执行，所以在 `toUnmoutPromise` 要去判断应用状态再执行，关于生命周期见上方总结 [[查看](#single-spa-微应用的生命周期)]
