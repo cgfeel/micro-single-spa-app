@@ -52,6 +52,11 @@ jobs:
           pnpm install --frozen-lockfile --prefer-offline # 严格按pnpm-lock.yaml安装，禁用版本更新
           pnpm list # 可选：打印依赖列表，方便调试
 
+      # 5. 执行构建（构建指定子包，或所有子包）
+      - name: Build project
+        working-directory: zf-micro-app
+        run: pnpm --filter single-spa-raw build
+
   deploy:
     if: github.event_name == 'push'
     needs: validate-and-build
@@ -60,11 +65,6 @@ jobs:
       pages: write
       id-token: write
     steps:
-      # 5. 执行构建（构建指定子包，或所有子包）
-      - name: Build project
-        working-directory: zf-micro-app
-        run: pnpm --filter single-spa-raw build
-
       # 6. 上传Storybook静态文件为Pages工件
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
