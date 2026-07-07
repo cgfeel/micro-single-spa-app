@@ -52,6 +52,14 @@ jobs:
           pnpm install --frozen-lockfile --prefer-offline # 严格按pnpm-lock.yaml安装，禁用版本更新
           pnpm list # 可选：打印依赖列表，方便调试
 
+  deploy:
+    if: github.event_name == 'push'
+    needs: validate-and-build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    steps:
       # 5. 执行构建（构建指定子包，或所有子包）
       - name: Build project
         working-directory: zf-micro-app
