@@ -57,6 +57,13 @@ jobs:
         working-directory: zf-micro-app
         run: pnpm --filter single-spa-raw build
 
+      # 6. 上传Storybook静态文件为Pages工件
+      - name: Upload Pages artifact
+        if: github.event_name == 'push'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: zf-micro-app/apps/single-spa/single-spa-raw/dist
+
   deploy:
     if: github.event_name == 'push'
     needs: validate-and-build
@@ -65,12 +72,6 @@ jobs:
       pages: write
       id-token: write
     steps:
-      # 6. 上传Storybook静态文件为Pages工件
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: "zf-micro-app/apps/single-spa/single-spa-raw/dist"
-
       # 7. 部署到GitHub Pages（官方套件，无需额外指定目录）
       - id: deploy
         name: Deploy to GitHub Pages
