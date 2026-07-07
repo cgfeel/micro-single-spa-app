@@ -1,23 +1,48 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+# 依赖
+node_modules/
+**/node_modules/
+packages/**/node_modules/
+.pnpm-store/
 
-# dependencies
-/node_modules
-/.pnp
-.pnp.js
+# 构建输出
+dist/
+build/
+coverage-reports/
+storybook-static
+*.tsbuildinfo
 
-# testing
-/coverage
-
-# production
-/build
-
-# misc
-.DS_Store
+# 环境变量
+.env
 .env.local
-.env.development.local
-.env.test.local
-.env.production.local
+.env.*.local
 
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
+# 日志
+*.log
+logs/
+
+# 系统文件
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/*
+!.vscode/extensions.json
+.idea
+
+# 测试覆盖率
+coverage/
+.nyc_output/
+
+# 缓存
+.vite/
+.cache/
+.turbo/
+
+# Local
+*.local
+*.log*
+
+# Profile
+.rspack-profile-*/
+
+*storybook.log

@@ -1,0 +1,79 @@
+name: Systemjs CI
+
+# 触发条件：main分支有push/PR，所有PR都触发（和子包一致，可按需扩展）
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: write # 从read改为write，允许创建/推送分支
+  pull-requests: write # 新增：允许创建/管理PR
+  pages: write # 保留：部署GitHub Pages所需
+  id-token: write # 保留：Pages部署的身份验证
+
+jobs:
+  validate-and-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout parent repo
+        uses: actions/checkout@v4
+        with:
+          repository: cgfeel/zf-micro-app
+          path: zf-micro-app
+          token: ${{ secrets.GH_PACKAGES_TOKEN }}
+
+      - name: Checkout systemjs (PR code into workspace)
+        uses: actions/checkout@v4
+        with:
+          path: zf-micro-app/apps/single-spa/single-spa-raw
+          fetch-depth: 0
+          ref: ${{ github.sha }}
+
+      # 2. 安装pnpm（Ubuntu默认无pnpm，需手动安装）
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: latest
+
+      # 3. 设置Node.js环境（匹配项目Node版本，优先LTS）
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+          cache: "pnpm" # 关键：改为pnpm缓存（替代原npm）
+          cache-dependency-path: zf-micro-app/pnpm-lock.yaml # 指定pnpm锁文件路径
+
+      # 4. 安装monorepo所有依赖（pnpm ci替代npm ci，更适配monorepo）
+      - name: Install dependencies
+        working-directory: zf-micro-app
+        run: |
+          pnpm install --frozen-lockfile --prefer-offline # 严格按pnpm-lock.yaml安装，禁用版本更新
+          pnpm list # 可选：打印依赖列表，方便调试
+
+  deploy:
+    if: github.event_name == 'push'
+    needs: validate-and-build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    steps:
+      # 5. 执行构建（构建指定子包，或所有子包）
+      - name: Build project
+        working-directory: zf-micro-app
+        run: pnpm --filter single-spa-raw build
+
+      # 6. 上传Storybook静态文件为Pages工件
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: "zf-micro-app/apps/single-spa/single-spa-raw/dist"
+
+      # 7. 部署到GitHub Pages（官方套件，无需额外指定目录）
+      - id: deploy
+        name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v4
+        with:
+          token: ${{ github.token }}
