@@ -4,19 +4,16 @@
   "description": "一个 `single-spa` 原理演示，完整内容查看主仓库：https://github.com/cgfeel/zf-micro-app",
   "main": "index.js",
   "scripts": {
-    "build": "webpack",
-    "start": "webpack serve",
+    "build": "micro-cli build",
+    "start": "micro-cli serve",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
   "license": "MIT",
   "devDependencies": {
+    "@event-chat/micro-dev-config": "^0.0.5",
     "html-webpack-plugin": "^5.6.0",
-    "ts-loader": "^9.5.1",
-    "typescript": "^5.4.5",
-    "webpack": "^5.91.0",
-    "webpack-cli": "^5.1.4",
-    "webpack-dev-server": "^5.0.4"
+    "ts-loader": "^9.5.1"
   }
 }
