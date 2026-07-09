@@ -12,6 +12,8 @@
   "author": "",
   "license": "MIT",
   "devDependencies": {
-    "@event-chat/micro-dev-config": "^0.0.9"
+    "@event-chat/micro-dev-config": "^0.0.13",
+    "@types/node": "^16.18.126",
+    "typescript": "^5.9.3"
   }
 }

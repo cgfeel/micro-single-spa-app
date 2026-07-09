@@ -1,13 +1,9 @@
 {
+    "extends": "@event-chat/micro-dev-config/tsconfig", 
     "compilerOptions": {
-        "outDir": "./dist/",
-        "noImplicitAny": true,
-        "module": "ES6",
-        "target": "es2016",
-        "jsx": "react-jsx",
-        "strict": true,
-        "allowJs": true,
-        "moduleResolution": "bundler",
-        "esModuleInterop": true
-    }
+        "rootDir": "src"
+    },
+    "include": [
+        "src/**/*.ts"
+    ]
 }
