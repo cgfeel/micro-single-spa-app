@@ -4,7 +4,7 @@
   "description": "一个 `single-spa` 原理演示，完整内容查看主仓库：https://github.com/cgfeel/zf-micro-app",
   "main": "index.js",
   "scripts": {
-    "build": "micro-cli build",
+    "build": "micro-cli build --env production",
     "start": "micro-cli serve",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
