@@ -1,7 +1,6 @@
 // webpack-ts-demo/webpack.config.js
-
+const { HtmlWebpackPlugin, loader } = require("@event-chat/micro-dev-config/helpers");
 const path = require('path');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
     // 开发模式，告知 webpack 使用相应模式的内置优化
@@ -27,7 +26,9 @@ module.exports = {
         rules: [
             {
                 test: /\.ts$/,
-                loader: 'ts-loader'
+                use: {
+                    loader: loader("ts-loader")
+                }
             }
         ]
     },

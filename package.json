@@ -12,8 +12,6 @@
   "author": "",
   "license": "MIT",
   "devDependencies": {
-    "@event-chat/micro-dev-config": "^0.0.5",
-    "html-webpack-plugin": "^5.6.0",
-    "ts-loader": "^9.5.1"
+    "@event-chat/micro-dev-config": "^0.0.9"
   }
 }
