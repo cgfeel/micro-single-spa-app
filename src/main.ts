@@ -2,15 +2,7 @@ import { registerApplication, start } from './single-spa'
 import { ApplicationType } from './single-spa/application/app'
 
 const rootPath = process.env.BASE_URL ?? '/'
-function createElement(id: string) {
-  if (!document.getElementById(id)) {
-    const script = id === 'app0' ? document.createElement('script') : null
-    const app = document.createElement('div')
-    app.id = id
-
-    document.body.appendChild(app)
-    if (script) {
-      script.innerHTML = `const urlParams = new URLSearchParams(window.location.search)
+const redirectTem = `const urlParams = new URLSearchParams(window.location.search)
 const redirectPath = urlParams.get('redirect')
 if (redirectPath) {
   // 移除redirect参数，跳转到原路由（保留其他查询参数）
@@ -21,6 +13,17 @@ if (redirectPath) {
   window.history.replaceState({}, null, ${rootPath} + redirectPath.slice(1) + newSearch)
 }
 `
+
+function createElement(id: string) {
+  if (!document.getElementById(id)) {
+    const script = id === 'app0' ? document.createElement('script') : null
+    const app = document.createElement('div')
+
+    app.id = id
+    document.body.appendChild(app)
+
+    if (script) {
+      script.innerHTML = redirectTem
       document.body.appendChild(script)
     }
   }
