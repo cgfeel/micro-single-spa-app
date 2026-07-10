@@ -1,10 +1,10 @@
 // webpack-ts-demo/webpack.config.js
-const { HtmlWebpackPlugin, loader } = require("@event-chat/micro-dev-config/helpers");
+const { HtmlWebpackPlugin, defineEnvPlugin, loader } = require("@event-chat/micro-dev-config/helpers");
 const path = require('path');
 
-module.exports = {
+module.exports = (env) => ({
     // 开发模式，告知 webpack 使用相应模式的内置优化
-    mode: 'development',
+    mode: env?.production ? 'production' : 'development',
     // 入口文件，需手动在根目录下创建`/src/main.ts`文件
     entry: './src/main.ts',
     // 打包输出配置
@@ -17,6 +17,10 @@ module.exports = {
         extensions: [".ts", ".js"]
     },
     plugins: [
+        defineEnvPlugin(env, {
+            APP_NAME: 'single-spa-raw',
+            BASE_URL: env.production ? "/micro-single-spa-app/" : "/"
+        }),
         new HtmlWebpackPlugin({
             template: './public/index.html' // 使用本地模板（手动在根目录创建一个`index.html`文件，在vscode编辑器中，点新建文件，输入`!`，然后按`tab`键，会自动生成一段html代码，保存就可以了）
         }),
@@ -35,4 +39,4 @@ module.exports = {
     devServer: {
         historyApiFallback: true,  // 添加这一行代码，当使用 HTML5 History API 时，任意的 404 响应都可能需要被替代为 index.html
     }
-}
+})
