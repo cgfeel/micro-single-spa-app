@@ -4,21 +4,13 @@ import { ApplicationType } from './single-spa/application/app'
 const rootPath = process.env.BASE_URL ?? '/'
 function createElement(id: string) {
   if (!document.getElementById(id)) {
+    const script = id === 'app0' ? document.createElement('script') : null
     const app = document.createElement('div')
     app.id = id
 
     document.body.appendChild(app)
-  }
-}
-
-function updateElement(id: string, html: string) {
-  const script = document.createElement('script')
-  const app = document.getElementById(id)
-  if (app) {
-    app.innerHTML = html
-  }
-
-  script.innerHTML = `const urlParams = new URLSearchParams(window.location.search)
+    if (script) {
+      script.innerHTML = `const urlParams = new URLSearchParams(window.location.search)
 const redirectPath = urlParams.get('redirect')
 if (redirectPath) {
   // 移除redirect参数，跳转到原路由（保留其他查询参数）
@@ -26,10 +18,19 @@ if (redirectPath) {
   const params = urlParams.toString()
   const newSearch = params ? '?' + params : ''
   
-  window.history.replaceState({}, null, ${rootPath} + newSearch)
+  window.history.replaceState({}, null, ${rootPath} + redirectPath.slice(1) + newSearch)
 }
 `
-  document.body.appendChild(script)
+      document.body.appendChild(script)
+    }
+  }
+}
+
+function updateElement(id: string, html: string) {
+  const app = document.getElementById(id)
+  if (app) {
+    app.innerHTML = html
+  }
 }
 
 function createScript() {
@@ -50,8 +51,8 @@ const app0: ApplicationType = {
       `<div>
         <a onclick="window.history.pushState({}, null, '${rootPath}')">app1</a> |
         <a onclick="window.history.pushState({}, null, '${rootPath}app2')">app2</a> |
-        <a href="${rootPath}#/app3">+app3</a> |
-        <a href="${rootPath}#/app4">+app4</a>
+        <a href="#/app3">+app3</a> |
+        <a href="#/app4">+app4</a>
     </div>`
     ),
   unmount: async ({ _name }) => updateElement(_name, ''),
