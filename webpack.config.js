@@ -1,5 +1,5 @@
 // webpack-ts-demo/webpack.config.js
-const { HtmlWebpackPlugin, defineEnvPlugin, loader } = require("@event-chat/micro-dev-config/helpers");
+const { HtmlWebpackPlugin, copyPlugin, defineEnvPlugin, loader } = require("@event-chat/micro-dev-config/helpers");
 const path = require('path');
 
 module.exports = (env) => ({
@@ -21,8 +21,20 @@ module.exports = (env) => ({
             APP_NAME: 'single-spa-raw',
             BASE_URL: env.production ? "/micro-single-spa-app/" : "/"
         }),
+        copyPlugin([
+            {
+                from: path.resolve(__dirname, 'public'),
+                noErrorOnMissing: true,
+                globOptions: {
+                    ignore: ['**/index.html']
+                },
+            }
+        ]),
         new HtmlWebpackPlugin({
-            template: './public/index.html' // 使用本地模板（手动在根目录创建一个`index.html`文件，在vscode编辑器中，点新建文件，输入`!`，然后按`tab`键，会自动生成一段html代码，保存就可以了）
+            template: './public/index.html',
+            templateParameters: {
+                BASE_URL: env.production ? "/micro-single-spa-app/" : "/"
+            }
         }),
     ],
     module: {

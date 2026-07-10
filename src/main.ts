@@ -12,10 +12,24 @@ function createElement(id: string) {
 }
 
 function updateElement(id: string, html: string) {
+  const script = document.createElement('script')
   const app = document.getElementById(id)
   if (app) {
     app.innerHTML = html
   }
+
+  script.innerHTML = `const urlParams = new URLSearchParams(window.location.search)
+const redirectPath = urlParams.get('redirect')
+if (redirectPath) {
+  // 移除redirect参数，跳转到原路由（保留其他查询参数）
+  urlParams.delete('redirect')
+  const params = urlParams.toString()
+  const newSearch = params ? '?' + params : ''
+  
+  window.history.replaceState({}, null, rootPath + newSearch)
+}
+`
+  document.body.appendChild(script)
 }
 
 function createScript() {
