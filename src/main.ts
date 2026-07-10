@@ -26,7 +26,7 @@ if (redirectPath) {
   const params = urlParams.toString()
   const newSearch = params ? '?' + params : ''
   
-  window.history.replaceState({}, null, rootPath + newSearch)
+  window.history.replaceState({}, null, ${rootPath} + newSearch)
 }
 `
   document.body.appendChild(script)
