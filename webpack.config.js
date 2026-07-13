@@ -1,5 +1,6 @@
 // webpack-ts-demo/webpack.config.js
-const { HtmlWebpackPlugin, copyPlugin, defineEnvPlugin, loader } = require("@event-chat/micro-dev-config/helpers");
+const { loader } = require("@event-chat/micro-dev-config/helpers");
+const { HtmlWebpackPlugin, copyPlugin, defineEnvPlugin } = require("@event-chat/micro-dev-config/plugins")
 const path = require('path');
 
 module.exports = (env) => ({
