@@ -3,8 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
-    <link rel="alternate icon" type="image/png" href="<%= BASE_URL %>favicon.ico" />
+    <title><%= htmlWebpackPlugin.options.title %></title>
+    <link rel="alternate icon" href="<%= BASE_URL %>favicon.svg" />
     <style>
       a {
         cursor: pointer;
@@ -12,13 +12,6 @@
     </style>
   </head>
   <body>
-    <div id="root">
-      <p>
-        打开浏览器调试窗口查看演示 [<a href="/">复现 Single-spa</a>] [<a
-          href="/single-spa.html#/app1"
-          >Single-spa 使用原理</a
-        >]
-      </p>
-    </div>
+    <div id="root"></div>
   </body>
 </html>

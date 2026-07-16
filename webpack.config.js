@@ -11,7 +11,7 @@ module.exports = (env) => ({
     // 打包输出配置
     output: {
         path: path.resolve(__dirname, './dist'),
-        filename: 'bundle.js'
+        filename:  env?.production ? '[name].[contenthash:8].js' : '[name].js'
     },
     resolve: {
         // 这里是配置文件的后缀，在import引入文件的时候，如果不写文件后缀，则会按照这个配置的后缀去查找，`...`是默认配置,其实就是在默认配置基础上增加`.ts`扩展
@@ -35,7 +35,8 @@ module.exports = (env) => ({
             template: './public/index.html',
             templateParameters: {
                 BASE_URL: env.production ? "/micro-single-spa-app/" : "/"
-            }
+            },
+            title: '手写一个 Single-spa'
         }),
     ],
     module: {
