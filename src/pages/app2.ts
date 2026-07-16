@@ -10,12 +10,12 @@ function createScript() {
 }
 
 const app2: ApplicationType = {
-  bootstrap: async (props) => {
+  bootstrap: (props) => {
     console.log(`${props._name} bootstrap1`, props)
     createElement(props._name)
     createScript()
   },
-  async mount(props) {
+  mount(props) {
     updateElement(props._name, `<h1>${props._name.toUpperCase()}-props: ${props.a}</h1>`)
     return new Promise((resovle) => {
       setTimeout(() => {
@@ -24,7 +24,7 @@ const app2: ApplicationType = {
       }, 1000)
     })
   },
-  async unmount({ _name }) {
+  unmount({ _name }) {
     console.log(`${_name} unmount`)
     updateElement(_name, '')
   },

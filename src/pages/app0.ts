@@ -9,7 +9,7 @@ if (redirectPath) {
   const params = urlParams.toString()
   const newSearch = params ? '?' + params : ''
   
-  window.history.replaceState({}, null, ${rootPath} + redirectPath.slice(1) + newSearch)
+  window.history.replaceState({}, null, '${rootPath}' + redirectPath.slice(1) + newSearch)
 }
 `
 
@@ -22,8 +22,8 @@ function bootstrap(id: string) {
 }
 
 const app0: ApplicationType = {
-  bootstrap: async ({ _name }) => bootstrap(_name),
-  mount: async ({ _name }) =>
+  bootstrap: ({ _name }) => bootstrap(_name),
+  mount: ({ _name }) =>
     updateElement(
       _name,
       `<div>
@@ -33,7 +33,7 @@ const app0: ApplicationType = {
         <a href="#/app4">+app4</a>
     </div>`
     ),
-  unmount: async ({ _name }) => updateElement(_name, ''),
+  unmount: ({ _name }) => updateElement(_name, ''),
 }
 
 export default app0
