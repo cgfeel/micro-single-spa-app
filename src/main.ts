@@ -1,5 +1,4 @@
-import { registerApplication, start } from './single-spa'
-import { ApplicationType } from './single-spa/application/app'
+import { ApplicationType, registerApplication, start } from '@event-chat/single-spa'
 
 const rootPath = process.env.BASE_URL ?? '/'
 const redirectTem = `const urlParams = new URLSearchParams(window.location.search)

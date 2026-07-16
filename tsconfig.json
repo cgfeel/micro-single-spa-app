@@ -1,9 +1,7 @@
 {
-    "extends": "@event-chat/micro-dev-config/tsconfig", 
-    "compilerOptions": {
-        "rootDir": "src"
-    },
-    "include": [
-        "src/**/*.ts"
-    ]
+  "extends": "@event-chat/micro-dev-config/tsconfig",
+  "compilerOptions": {
+    "rootDir": "src"
+  },
+  "include": ["src/**/*.ts"]
 }
