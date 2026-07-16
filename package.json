@@ -12,8 +12,11 @@
   "author": "",
   "license": "MIT",
   "devDependencies": {
-    "@event-chat/micro-dev-config": "^0.0.21",
+    "@event-chat/micro-dev-config": "^0.0.25",
     "@types/node": "^16.18.126",
     "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "@event-chat/single-spa": "^0.0.12"
   }
 }
